@@ -13,6 +13,13 @@
 My IP address is: 54.81.96.130
 Launching my AMI I initially put it on a private subnet. Even though it had a public IP address and the security group was right, I wasn't able to connect to it.
 
+## Helpful Git Commands
+
+git fetch and then git status will show you if your branch is behind or up to date on the repo
+git commit -am allows you to commit all previously added/tracked files
+git checkout ... allows you to revert to a previous version of your code (you can return to the master using git checkout master)
+using git checkout and git branch, you can commit to a branch and work on another functionality without affecting your master code. Once you have the branch functionality working, you can use git merge.
+
 ## Caddy
 
 No problems worked just like it said in the [instruction](https://github.com/webprogramming260/.github/blob/main/profile/webServers/https/https.md).
