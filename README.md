@@ -61,6 +61,8 @@ sequenceDiagram
     Alice->>Server: Alice + 1
     Server-->>Juan: Alice + 1
     Server-->>Bud: Alice + 1
+```
+
 
 ### Key features
 
