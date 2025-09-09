@@ -24,16 +24,43 @@ Happy New Year! Time to pull out your trusty notes app and write down all the re
 
 ### Design
 
-![Design image](placeholder.png)
+![Login page](login.jpg)
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+![Habit Page](habitBoard.jpg)
+
+![Leaderboard](Leaderboard.jpg)
+
+
+The leaderboard stays up-to-date in real time using **WebSockets**.  
+Here’s how it works, both in general and with a concrete example:
 
 ```mermaid
 sequenceDiagram
-    actor You
-    actor Website
-    You->>Website: Replace this with your design
-```
+    %% General Flow
+    actor User as User
+    participant Client as Client (Browser/App)
+    participant Server as WebSocket Server
+    participant DB as Database
+
+    User->>Client: Submit game result / score
+    Client->>Server: Send score update via WebSocket
+    Server->>DB: Save new score
+    DB-->>Server: Acknowledge save
+    Server-->>Client: Confirm update
+    Server-->>All Clients: Broadcast updated leaderboard
+
+    %% Example Players
+    actor Alice
+    actor Juan
+    actor Bud
+
+    Bud->>Server: Bud + 1
+    Server-->>Alice: Bud + 1
+    Server-->>Juan: Bud + 1
+
+    Alice->>Server: Alice + 1
+    Server-->>Juan: Alice + 1
+    Server-->>Bud: Alice + 1
 
 ### Key features
 
