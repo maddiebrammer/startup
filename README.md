@@ -1,15 +1,9 @@
-# Your startup name here
+# Nudge
 
 [My Notes](notes.md)
 
-A brief description of the application here. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. This is my edit for the GitHub assignment. I won't be adding or removing anything until I have an acceptable pitch. This is my addition from my webpage version of the repo.
+This application's purpose is to aid people in sticking to their goals of creating habits. It will allow a user to create new daily, weekly, and monthly tasks which they can keep track of and check off. They will also be able to check in on their friends progress with a friend leaderboard which provides an accoutablility aspect to the application.
 
-
-> [!NOTE]
->  This is a template for your startup application. You must modify this `README.md` file for each phase of your development. You only need to fill in the section for each deliverable when that deliverable is submitted in Canvas. Without completing the section for a deliverable, the TA will not know what to look for when grading your submission. Feel free to add additional information to each deliverable description, but make sure you at least have the list of rubric items and a description of what you did for each item.
-
-> [!NOTE]
->  If you are not familiar with Markdown then you should review the [documentation](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax) before continuing.
 
 ## 🚀 Specification Deliverable
 
@@ -18,15 +12,15 @@ A brief description of the application here. Lorem ipsum dolor sit amet, consect
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] Proper use of Markdown
-- [ ] A concise and compelling elevator pitch
-- [ ] Description of key features
-- [ ] Description of how you will use each technology
+- [x] Proper use of Markdown
+- [x] A concise and compelling elevator pitch
+- [x] Description of key features
+- [x] Description of how you will use each technology
 - [ ] One or more rough sketches of your application. Images must be embedded in this file using Markdown image references.
 
 ### Elevator pitch
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Happy New Year! Time to pull out your trusty notes app and write down all the resolutions, goals and things you hope to do this year, but never actually manage to keep doing past the month of February right? ***Wrong!*** Nudge is a new habit tracking app that helps you build consistency in any new habits you want to form. Start whenever, wherever and build the habits you've always been trying to. You can also have accountability buddies when you share the app with your friends and compete for the highest score on your personal leaderboard.
 
 ### Design
 
@@ -43,20 +37,29 @@ sequenceDiagram
 
 ### Key features
 
-- Describe your key feature
-- Describe your key feature
-- Describe your key feature
+- Secure login over HTTPS
+- Ability to create new habits to track
+- Display of all incomplete habits
+- Display of all completed habits ~~struck through~~
+- Leaderboard from all users displayed in realtime
+- Ability for a user to check off habits when completed
+- Daily Scores persistently stored
+- Ability to delete old habits
 
 ### Technologies
 
 I am going to use the required technologies in the following ways.
 
-- **HTML** - Description here
-- **CSS** - Description here
-- **React** - Description here
-- **Service** - Description here
-- **DB/Login** - Description here
-- **WebSocket** - Description here
+- **HTML** - Uses correct HTML structure for application. Three HTML pages. One for login and one for habit tracking and one for websocket updated leaderboard.
+- **CSS** - Application styling that looks good on desktop and mobile. Includes progress bars and uses consistent color palettes, whitespace, and contrast.
+- **React** - Provides components for login/register, habit list, habit creation form, and leaderboard. Handles routing between login, dashboard, and history views. Updates UI dynamically when habits are added, completed, or deleted.
+- **Service** - Backend service with endpoints for:
+    - login, register, logout
+    - creating, retrieving, updating, and deleting habits
+    - checking off habits as complete
+    - retrieving user history and daily scores
+- **DB/Login** - Store users, habits, and daily check-ins in the database. Securely hash and store credentials. Enforce authentication so habits can only be managed by the logged-in user. Persist daily scores across sessions.
+- **WebSocket** - Broadcasts real-time updates when users check off habits. Updates a live leaderboard showing current scores of all users.
 
 ## 🚀 AWS deliverable
 
