@@ -31,36 +31,22 @@ Happy New Year! Time to pull out your trusty notes app and write down all the re
 ![Leaderboard](Leaderboard.jpg)
 
 
-The leaderboard stays up-to-date in real time using **WebSockets**.  
-Here’s how it works, both in general and with a concrete example:
+The leaderboard stays up-to-date in real time using **WebSockets**.
 
 ```mermaid
 sequenceDiagram
-    %% General Flow
-    actor User as User
-    participant Client as Client (Browser/App)
-    participant Server as WebSocket Server
-    participant DB as Database
+    actor James
+    actor Brian
+    actor Millie
+    participant Server
 
-    User->>Client: Submit game result / score
-    Client->>Server: Send score update via WebSocket
-    Server->>DB: Save new score
-    DB-->>Server: Acknowledge save
-    Server-->>Client: Confirm update
-    Server-->>All Clients: Broadcast updated leaderboard
+    Millie->>Server: Update leaderboard: Millie + 1
+    Server-->>James: Update leaderboard: Millie + 1
+    Server-->>Brian: Update leaderboard: Millie + 1
 
-    %% Example Players
-    actor Alice
-    actor Juan
-    actor Bud
-
-    Bud->>Server: Bud + 1
-    Server-->>Alice: Bud + 1
-    Server-->>Juan: Bud + 1
-
-    Alice->>Server: Alice + 1
-    Server-->>Juan: Alice + 1
-    Server-->>Bud: Alice + 1
+    James->>Server: Update leaderboard: James + 1
+    Server-->>Brian: Update leaderboard: James + 1
+    Server-->>Millie: Update leaderboard: James + 1
 ```
 
 
