@@ -20,6 +20,8 @@ git commit -am allows you to commit all previously added/tracked files
 git checkout ... allows you to revert to a previous version of your code (you can return to the master using git checkout master)
 using git checkout and git branch, you can commit to a branch and work on another functionality without affecting your master code. Once you have the branch functionality working, you can use git merge.
 
+to deploy: ./deployFiles.sh -k <keypair> -h ndge.click -s startup
+
 ## Caddy
 
 No problems worked just like it said in the [instruction](https://github.com/webprogramming260/.github/blob/main/profile/webServers/https/https.md).
