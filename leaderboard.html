@@ -66,5 +66,27 @@
       <br />
       <a href="https://github.com/maddiebrammer/startup.git">GitHub</a>
     </footer>
+    <script>
+    // DB fetch placeholder example (replace URL with your API)
+    async function loadLeaderboard() {
+      try {
+        console.log('loadLeaderboard placeholder — replace with actual fetch to /api/leaderboard');
+      } catch (err) {
+        console.error('fetch failed', err);
+      }
+    }
+    loadLeaderboard();
+
+    // WebSocket placeholder demo: show where to connect and how to update UI
+    (function demoWebSocketPlaceholder() {
+      const status = document.getElementById('ws-status');
+      const log = document.getElementById('ws-log');
+
+      // Demo message showing where updates would appear
+      const li = document.createElement('li');
+      li.textContent = 'WS placeholder: real-time updates will appear here.';
+      log.appendChild(li);
+    })();
+  </script>
   </body>
 </html>
