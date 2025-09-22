@@ -80,21 +80,21 @@ I am going to use the required technologies in the following ways.
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Server deployed and accessible with custom domain name** - [My server link](https://yourdomainnamehere.click).
+- [x] **Server deployed and accessible with custom domain name** - [My server link](https://ndge.click).
 
 ## 🚀 HTML deliverable
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **HTML pages** - I did not complete this part of the deliverable.
-- [ ] **Proper HTML element usage** - I did not complete this part of the deliverable.
-- [ ] **Links** - I did not complete this part of the deliverable.
-- [ ] **Text** - I did not complete this part of the deliverable.
-- [ ] **3rd party API placeholder** - I did not complete this part of the deliverable.
-- [ ] **Images** - I did not complete this part of the deliverable.
-- [ ] **Login placeholder** - I did not complete this part of the deliverable.
-- [ ] **DB data placeholder** - I did not complete this part of the deliverable.
-- [ ] **WebSocket placeholder** - I did not complete this part of the deliverable.
+- [x] **HTML pages** - Three different pages. One for each view. `index.html` (Login), `track.html`, and `leaderboard.html`.
+- [x] **Proper HTML element usage** - I used header, footer, main, nav, img, a and many more.
+- [x] **Links** - Links between views.
+- [x] **Text** - Index page has text.
+- [x] **3rd party API placeholder** - Track page has a place to display an inspirational quote.
+- [x] **Images** - Image is displayed on the index page.
+- [x] **Login placeholder** - Placeholder for auth on the login page.
+- [x] **DB data placeholder** - High scores displayed on scores page.
+- [x] **WebSocket placeholder** - The leaderboard page has a text area that will show updated leaderboard.
 
 ## 🚀 CSS deliverable
 
