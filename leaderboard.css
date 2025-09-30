@@ -118,6 +118,36 @@ tbody td {
 }
 
 /* ============================
+   Realtime Section
+============================ */
+
+#realtime {
+  margin-top: 2rem;
+  max-width: 400px;
+  width: 100%;
+  text-align: left;
+}
+
+#ws-status {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+#ws-log {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#ws-log li {
+  background: white;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* ============================
    Footer
 ============================ */
 footer hr {
