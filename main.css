@@ -1,0 +1,32 @@
+body {
+  display: flex;
+  flex-direction: column;
+  min-width: 375px;
+  min-height: 100vh;
+  font-family: 'Patrick Hand', cursive, sans-serif;
+  background-color: white;
+  margin: 0;
+}
+
+
+header {
+  flex: 0 80px;
+  text-align: center;
+  padding-top: 1rem;
+}
+
+main {
+  flex: 1 calc(100vh - 110px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  padding: 2rem;
+  text-align: center;
+}
+
+footer {
+  flex: 0 30px;
+  text-align: center;
+  padding: 0.5rem 0;
+}
