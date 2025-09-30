@@ -88,10 +88,43 @@ menu .nav-item {
 }
 
 /* ============================
-   Main Content (Login Form)
+   Main Content (Tracking)
 ============================ */
 
+main h1 {
+  font-size: 2rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
 
+main ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  max-width: 400px;
+  text-align: left;
+}
+
+main ul li {
+  background: white;
+  margin: 0.5rem 0;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+main ul li s {
+  color: #888;
+}
+
+main ul li:hover {
+  transform: scale(1.02);
+  transition: transform 0.2s ease;
+}
 
 /* ============================
    Footer
