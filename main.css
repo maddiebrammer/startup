@@ -8,7 +8,7 @@ body {
   min-width: 375px;
   min-height: 100vh;
   font-family: 'Patrick Hand', cursive, sans-serif;
-  background-color: white;
+  background-color: rgb(255, 242, 242);
   margin: 0;
 }
 
@@ -134,4 +134,49 @@ button {
 
 button:hover {
   background-color: #e07a7a;
+}
+
+/* ============================
+   Footer
+============================ */
+footer hr {
+  width: 90%;
+  border: none;
+  border-top: 2px solid #0a5343;
+  margin-bottom: 0.5rem;
+}
+
+footer a {
+  color: #0a5343;
+  text-decoration: none;
+}
+
+footer a:hover {
+  color: #e07a7a;
+}
+
+/* ============================
+   Responsive Behavior
+============================ */
+@media (max-height: 600px) {
+  header {
+    display: none;
+  }
+  footer {
+    display: none;
+  }
+  main {
+    flex: 1 100vh;
+  }
+}
+
+@media (max-width: 600px) {
+  menu {
+    flex-direction: column !important;
+    gap: 0.5rem;
+  }
+
+  main h1 {
+    font-size: 1.5rem;
+  }
 }
