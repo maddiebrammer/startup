@@ -105,20 +105,26 @@ main ul {
   text-align: left;
 }
 
-main ul li {
-  background: white;
-  margin: 0.5rem 0;
-  padding: 0.75rem 1rem;
-  border-radius: 12px;
-  font-size: 1.1rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+main ul li label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: white;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+main ul li input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #0a5343; 
+    cursor: pointer;
 }
 
 main ul li s {
-  color: #888;
+    color: #888;
 }
 
 main ul li:hover {
