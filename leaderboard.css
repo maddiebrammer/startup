@@ -93,39 +93,32 @@ menu .nav-item {
 
 table {
   border-collapse: separate;
-  border-spacing: 0 0.75rem; /* adds space between rows */
+  border-spacing: 0 0.75rem; /* keeps spacing between rows */
   width: 100%;
   max-width: 400px;
   margin: 1rem auto;
 }
 
-thead th {
-  text-align: left;
-  padding: 0.5rem 1rem;
-  color: #0a5343;
-  font-size: 1.2rem;
-}
-
 tbody tr {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  transition: transform 0.2s ease;
-}
-
-tbody tr:hover {
-  transform: scale(1.02);
+  background: transparent; /* make TR transparent to let TD styling show */
 }
 
 tbody td {
+  background: white;
   padding: 0.75rem 1rem;
   font-size: 1.1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-/* Make first column bold (name) */
 tbody td:first-child {
   font-weight: bold;
   color: #0a5343;
+}
+
+tbody tr:hover td {
+  transform: scale(1.02);
+  transition: transform 0.2s ease;
 }
 
 /* ============================
