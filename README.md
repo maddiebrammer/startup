@@ -24,11 +24,11 @@ Happy New Year! Time to pull out your trusty notes app and write down all the re
 
 ### Design
 
-![Login page](login.jpg)
+![Login page](./public/img/login.jpg)
 
-![Habit Page](habitBoard.jpg)
+![Habit Page](./public/img/habitBoard.jpg)
 
-![Leaderboard](Leaderboard.jpg)
+![Leaderboard](./public/img/Leaderboard.jpg)
 
 
 The leaderboard stays up-to-date in real time using **WebSockets**.
