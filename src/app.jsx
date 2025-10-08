@@ -7,6 +7,14 @@ import { Login } from './login/login';
 import { Track } from './track/track';
 import { Leaderboard } from './leaderboard/leaderboard';
 
+function NotFound() {
+  return (
+    <div>
+      <h2>404 - Page Not Found</h2>
+      <p>Sorry, the page you’re looking for doesn’t exist.</p>
+    </div>
+  );
+}
 
 export default function App() {
   return (
@@ -16,13 +24,13 @@ export default function App() {
 
         <nav>
             <menu>
-            <li><NavLink className = "navlink active" to ="index">
+            <li><NavLink className = "nav-link" to ="/">
                 Home
                 </NavLink></li>
-            <li><NavLink className = "navlink active" to="track">
+            <li><NavLink className = "nav-link" to="track">
                 Track
                 </NavLink></li>
-            <li><NavLink className = "navlink active" to="leaderboard">
+            <li><NavLink className = "nav-link" to="leaderboard">
                 Leaderboard
                 </NavLink></li>
             </menu>
@@ -32,8 +40,12 @@ export default function App() {
         </header>
 
         <h1>Welcome to NDGE</h1>
-        <img src="./public/img/NDGE.png" alt="ndge app logo">
-        <main className = 'container-fluid bg-secondary text-center'>App containers go here</main>
+        <Routes>
+        <Route path='/' element={<Login />} exact />
+        <Route path='/track' element={<Track />} />
+        <Route path='/leaderboard' element={<Leaderboard />} />
+        <Route path='*' element={<NotFound />} />
+        </Routes>
         <footer>
         <hr />
         <span class="text-reset">Maddie Brammer</span>
