@@ -1,4 +1,5 @@
 import React from 'react';
+import './track.css'
 
 export function Track() {
   return (

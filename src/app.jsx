@@ -38,8 +38,6 @@ export default function App() {
 
         <hr />
         </header>
-
-        <h1>Welcome to NDGE</h1>
         <Routes>
         <Route path='/' element={<Login />} exact />
         <Route path='/track' element={<Track />} />
