@@ -38,3 +38,5 @@ scp -r -i "~/Desktop/Important/pairing66.pem" build/* ubuntu@NDGE.click:services
 printf "\n----> Removing local copy of the distribution package\n"
 rm -rf build
 rm -rf dist
+
+#  ./deployReact.sh -k ~/Desktop/Important/pairing66.pem -h ndge.click -s startup
