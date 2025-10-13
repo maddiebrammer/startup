@@ -26,13 +26,13 @@ cp -rf dist/* build
 # Step 2
 printf "\n----> Clearing out previous distribution on the target\n"
 ssh -i "~/Desktop/Important/pairing66.pem" ubuntu@NDGE.click << ENDSSH
-rm -rf services/${startup}/public
-mkdir -p services/${startup}/public
+rm -rf services/${service}/public
+mkdir -p services/${service}/public
 ENDSSH
 
 # Step 3
 printf "\n----> Copy the distribution package to the target\n"
-scp -r -i "~/Desktop/Important/pairing66.pem" build/* ubuntu@NDGE.click:services/$startup/public
+scp -r -i $key build/* ubuntu@$hostname:services/$service/public
 
 # Step 5
 printf "\n----> Removing local copy of the distribution package\n"

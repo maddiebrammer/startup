@@ -5,7 +5,7 @@ export function Login() {
   return (
     <main>
       <h1>Welcome to NDGE</h1>
-      <img src="./public/img/NDGE.png" alt="ndge app logo"
+      <img src="/img/NDGE.png" alt="ndge app logo"
        width = {300}/>
       <form method="get" action="track.html">
         <div>
