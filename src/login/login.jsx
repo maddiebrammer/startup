@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './login.css'
 
 export const AuthState = {
@@ -50,25 +51,61 @@ function Unauthenticated({ onLogin }) {
   );
 }
 
-export function Login() {
+function Authenticated({ userName, onLogout }) {
   return (
-    <main>
-      <h1>Welcome to NDGE</h1>
-      <img src="/img/NDGE.png" alt="ndge app logo"
-       width = {300}/>
-      <form method="get" action="track.html">
-        <div>
-          <span>@</span>
-          <input type="text" placeholder="username" />
-        </div>
-        <div>
-          <span>🔒</span>
-          <input type="password" placeholder="password" />
-        </div>
-        <button type="submit">Login</button>
-        <button type="submit">Create</button>
-      </form>
-    </main>
+    <div className="authenticated">
+      <h2>Welcome, {userName}!</h2>
+      <button onClick={onLogout}>Logout</button>
+    </div>
+  );
+}
 
+export function Login() {
+  const [authState, setAuthState] = useState(AuthState.Unknown);
+  const [userName, setUserName] = useState('');
+  const navigate = useNavigate(); // 👈 React Router navigation hook
+
+  useEffect(() => {
+    // Simulate checking saved session
+    const savedUser = localStorage.getItem('ndgeUser');
+    if (savedUser) {
+      setUserName(savedUser);
+      setAuthState(AuthState.Authenticated);
+      navigate('/track'); // 👈 automatically go to track if already logged in
+    } else {
+      setAuthState(AuthState.Unauthenticated);
+    }
+  }, [navigate]);
+
+  const handleAuthChange = (user, newState) => {
+    setUserName(user);
+    setAuthState(newState);
+
+    if (newState === AuthState.Authenticated) {
+      localStorage.setItem('ndgeUser', user);
+      navigate('/track'); // 👈 redirect to track page
+    } else {
+      localStorage.removeItem('ndgeUser');
+    }
+  };
+
+  return (
+    <main className="container-fluid text-center">
+      <h1>Welcome to NDGE</h1>
+      <img src="/img/NDGE.png" alt="NDGE app logo" width={300} />
+
+      {authState === AuthState.Authenticated && (
+        <Authenticated
+          userName={userName}
+          onLogout={() => handleAuthChange('', AuthState.Unauthenticated)}
+        />
+      )}
+
+      {authState === AuthState.Unauthenticated && (
+        <Unauthenticated
+          onLogin={(user) => handleAuthChange(user, AuthState.Authenticated)}
+        />
+      )}
+    </main>
   );
 }
