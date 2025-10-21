@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { clearUser, AuthState } from './login/auth';
+import { clearUser, AuthState } from '../auth.js';
 import './track.css';
 
 export function Track() {

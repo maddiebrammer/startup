@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthState, saveUser, getUser, clearUser, getAuthState } from './auth';
+import { AuthState, saveUser, getUser, clearUser, getAuthState } from '../auth.js';
 import './login.css';
 
 function Unauthenticated({ onLogin }) {
