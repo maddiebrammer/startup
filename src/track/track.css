@@ -97,6 +97,15 @@ main h1 {
   margin-bottom: 1rem;
 }
 
+main button {
+  margin-top: 2rem;
+  border-radius: 8px;
+  background-color: #0a5343;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
 main ul {
   list-style: none;
   padding: 0;
