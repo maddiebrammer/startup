@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './login.css'
-
-export const AuthState = {
-  Unknown: 'Unknown',
-  Authenticated: 'Authenticated',
-  Unauthenticated: 'Unauthenticated',
-};
+import { AuthState, saveUser, getUser, clearUser, getAuthState } from './auth';
+import './login.css';
 
 function Unauthenticated({ onLogin }) {
   const [userName, setUserName] = useState('');
@@ -14,8 +9,6 @@ function Unauthenticated({ onLogin }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Mock authentication — later this will call your backend
     if (userName && password) {
       onLogin(userName);
     } else {
@@ -63,25 +56,23 @@ function Authenticated({ userName, onLogout }) {
 export function Login() {
   const [authState, setAuthState] = useState(AuthState.Unknown);
   const [userName, setUserName] = useState('');
-  const navigate = useNavigate(); // 👈 React Router navigation hook
+  const navigate = useNavigate();
+
+  // Optional motivational quote placeholder
+  const [quote, setQuote] = useState('');
 
   useEffect(() => {
-    // Simulate fetching from an API
-    const fetchQuote = () => {
-      setTimeout(() => {
-        setQuote('"Success is the sum of small efforts, repeated day in and day out." – Robert Collier');
-      }, 1000);
-    };
-    fetchQuote();
+    setTimeout(() => {
+      setQuote('"Success is the sum of small efforts, repeated day in and day out." – Robert Collier');
+    }, 1000);
   }, []);
 
   useEffect(() => {
-    // Simulate checking saved session
-    const savedUser = localStorage.getItem('ndgeUser');
-    if (savedUser) {
-      setUserName(savedUser);
+    const user = getUser();
+    if (user) {
+      setUserName(user);
       setAuthState(AuthState.Authenticated);
-      navigate('/track'); // 👈 automatically go to track if already logged in
+      navigate('/track');
     } else {
       setAuthState(AuthState.Unauthenticated);
     }
@@ -92,10 +83,11 @@ export function Login() {
     setAuthState(newState);
 
     if (newState === AuthState.Authenticated) {
-      localStorage.setItem('ndgeUser', user);
-      navigate('/track'); // 👈 redirect to track page
+      saveUser(user);
+      navigate('/track');
     } else {
-      localStorage.removeItem('ndgeUser');
+      clearUser();
+      navigate('/');
     }
   };
 
@@ -103,6 +95,8 @@ export function Login() {
     <main className="container-fluid text-center">
       <h1>Welcome to NDGE</h1>
       <img src="/img/NDGE.png" alt="NDGE app logo" width={300} />
+
+      {quote && <p className="quote">{quote}</p>}
 
       {authState === AuthState.Authenticated && (
         <Authenticated

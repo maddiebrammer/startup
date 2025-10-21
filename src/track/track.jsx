@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { clearUser, AuthState } from './login/auth';
 import './track.css';
 
 export function Track() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    onLogout(); 
+    clearUser(); 
     navigate('/'); 
   };
   
@@ -61,7 +62,9 @@ export function Track() {
           </li>
         ))}
       </ul>
-      <button onClick={handleLogout}>Logout</button>
+      <div>
+        <button onClick={handleLogout}>Logout</button>
+      </div>
     </main>
   );
 }
