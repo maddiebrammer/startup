@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './track.css';
 
 export function Track() {
-  // Initial habits list (can be loaded from server later)
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    onLogout(); 
+    navigate('/'); 
+  };
+  
+    // Initial habits list (can be loaded from server later)
   const defaultHabits = [
     { id: 1, text: 'Walk the dog', done: false },
     { id: 2, text: 'Eat Breakfast', done: false },
@@ -53,6 +61,7 @@ export function Track() {
           </li>
         ))}
       </ul>
+      <button onClick={handleLogout}>Logout</button>
     </main>
   );
 }
