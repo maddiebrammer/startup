@@ -66,6 +66,16 @@ export function Login() {
   const navigate = useNavigate(); // 👈 React Router navigation hook
 
   useEffect(() => {
+    // Simulate fetching from an API
+    const fetchQuote = () => {
+      setTimeout(() => {
+        setQuote('"Success is the sum of small efforts, repeated day in and day out." – Robert Collier');
+      }, 1000);
+    };
+    fetchQuote();
+  }, []);
+
+  useEffect(() => {
     // Simulate checking saved session
     const savedUser = localStorage.getItem('ndgeUser');
     if (savedUser) {
