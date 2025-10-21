@@ -8,9 +8,9 @@ export function Track() {
     { id: 2, text: 'Eat Breakfast', done: false },
     { id: 3, text: 'Make a Healthy Dinner', done: false },
     { id: 4, text: 'Go to bed at 10', done: false },
-    { id: 5, text: 'Wake up at 7', done: true },
-    { id: 6, text: 'Make Bed', done: true },
-    { id: 7, text: 'Brush teeth', done: true },
+    { id: 5, text: 'Wake up at 7', done: false },
+    { id: 6, text: 'Make Bed', done: false },
+    { id: 7, text: 'Brush teeth', done: false },
   ];
 
   const [habits, setHabits] = useState(defaultHabits);
