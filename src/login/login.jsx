@@ -99,14 +99,30 @@ export function Login() {
   const [authState, setAuthState] = useState(AuthState.Unknown);
   const [userName, setUserName] = useState('');
   const [quote, setQuote] = useState('');
+  const [quoteAuthor, setQuoteAuthor] = useState('');
   const navigate = useNavigate();
 
+  // Fetch a new motivational quote
+  const fetchQuote = async () => {
+    try {
+      const response = await fetch('https://quote.cs260.click');
+      if (!response.ok) throw new Error('Failed to fetch quote');
+      const data = await response.json();
+      setQuote(data.quote);
+      setQuoteAuthor(data.author);
+    } catch (err) {
+      console.warn('Quote fetch failed', err);
+      setQuote('"Stay positive and keep moving forward."');
+      setQuoteAuthor('NDGE');
+    }
+  };
+
+  // Fetch a quote on mount, then every hour
   useEffect(() => {
-    setTimeout(() => {
-      setQuote(
-        '"Success is the sum of small efforts, repeated day in and day out." – Robert Collier'
-      );
-    }, 1000);
+    fetchQuote(); // initial fetch
+
+    const interval = setInterval(fetchQuote, 1000 * 60 * 60); // every hour
+    return () => clearInterval(interval); // cleanup
   }, []);
 
   useEffect(() => {
@@ -136,7 +152,11 @@ export function Login() {
       <h1>Welcome to NDGE</h1>
       <img src="/img/NDGE.png" alt="NDGE app logo" width={300} />
 
-      {quote && <p className="quote">{quote}</p>}
+      {quote && (
+        <p className="quote">
+          {quote} {quoteAuthor && `– ${quoteAuthor}`}
+        </p>
+      )}
 
       {authState === AuthState.Authenticated && (
         <Authenticated
@@ -153,3 +173,4 @@ export function Login() {
     </main>
   );
 }
+
