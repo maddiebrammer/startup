@@ -50,22 +50,31 @@ export function Track() {
     verifyAndLoad();
   }, [navigate]);
 
-  // Toggle habit completion
-  const toggleHabit = async (id) => {
-    const updatedHabits = habits.map((habit) =>
-      habit.id === id ? { ...habit, done: !habit.done } : habit
-    );
-    setHabits(updatedHabits);
+ // Toggle habit completion
+const toggleHabit = async (id) => {
+  const updatedHabits = habits.map((habit) =>
+    habit.id === id ? { ...habit, done: !habit.done } : habit
+  );
+  setHabits(updatedHabits);
 
-    const updatedHabit = updatedHabits.find((h) => h.id === id);
+  const updatedHabit = updatedHabits.find((h) => h.id === id);
 
-    await fetch('/api/habit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify(updatedHabit),
-    });
-  };
+  // Update habit state on backend
+  await fetch('/api/habit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(updatedHabit),
+  });
+
+  // Tell backend to recalculate user's score
+  await fetch('/api/score', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+  });
+};
+
 
   // Add a new habit
   const addHabit = async () => {

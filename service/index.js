@@ -38,8 +38,15 @@ apiRouter.post('/auth/create', async (req, res) => {
   // Hash password and create token
   const hashedPassword = await bcrypt.hash(password, 10);
   const token = uuid.v4();
+  
+  let name;
+  if (email.includes("@")) {
+    name = email.split('@')[0];
+  } else {
+    name = email
+  }
 
-  const user = { email, password: hashedPassword, token, habits: [] };
+  const user = { email, name, password: hashedPassword, token, habits: [] };
   users.push(user);
 
   // Add initial score
@@ -160,10 +167,18 @@ function updateScores(userEmail) {
   const completed = user.habits.filter(h => h.done).length;
   const existingScore = scores.find(s => s.user === userEmail);
 
+  // Use the user's real name, or a fallback
+  const displayName = user.name || user.email.split('@')[0] || 'Unknown';
+
   if (existingScore) {
     existingScore.score = completed;
+    existingScore.name = displayName;
   } else {
-    scores.push({ user: userEmail, score: completed });
+    scores.push({
+      user: userEmail,
+      name: displayName,
+      score: completed,
+    });
   }
 
   scores.sort((a, b) => b.score - a.score);
@@ -184,9 +199,8 @@ apiRouter.post('/score', verifyAuth, (req, res) => {
     return res.status(401).send({ msg: 'Unauthorized' });
   }
 
-  // Update the score using the helper function
-  const updatedScores = updateScores(user.email, user.email); // or user.name if you have it
-  res.send(updatedScores);
+  const updatedScores = updateScores(user.email);
+  res.status(200).send(updatedScores);
 });
 
 

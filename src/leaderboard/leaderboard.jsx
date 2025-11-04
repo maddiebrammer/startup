@@ -14,10 +14,17 @@ export function Leaderboard() {
   }, []);
 
   useEffect(() => {
-    fetch('/api/scores')
-      .then(res => res.json())
-      .then(data => setPlayers(data));
-  }, []);
+  fetch('/api/scores', {
+    method: 'GET',
+    credentials: 'include',
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log('SCORES FROM BACKEND:', data);
+      setPlayers(data);
+    });
+}, []);
+
 
 
   // Fetch leaderboard scores from backend
@@ -64,10 +71,10 @@ export function Leaderboard() {
           {sortedPlayers.map((player, index) => (
             <tr
               key={index}
-              className={player.name === currentUser ? 'highlight-row' : ''}
+              className={player.user === currentUser ? 'highlight-row' : ''}
             >
               <td>
-                <div className="row-card">{player.name}</div>
+                <div className="row-card">{player.user}</div>
               </td>
               <td>
                 <div className="row-card">{player.score}</div>
