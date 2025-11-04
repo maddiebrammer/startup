@@ -10,27 +10,45 @@ export function Track() {
   const [habits, setHabits] = useState([]);
   const [newHabitText, setNewHabitText] = useState('');
 
+  // Logout function
   const handleLogout = () => {
     clearUser();
     navigate('/');
   };
 
+  // Verify auth and load habits
   useEffect(() => {
-  fetch('/api/auth/verify', { method: 'GET', credentials: 'include' })
-    .catch(() => navigate('/')); // redirect to login if not authenticated
-}, [navigate]);
+    const verifyAndLoad = async () => {
+      try {
+        const verifyRes = await fetch('/api/auth/verify', {
+          method: 'GET',
+          credentials: 'include',
+        });
 
-  // Load habits from server on mount
-  useEffect(() => {
-    fetch('/api/habits', {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include', // send cookies
-    })
-      .then((res) => res.json())
-      .then((data) => setHabits(data))
-      .catch(() => setHabits([]));
-  }, []);
+        if (!verifyRes.ok) {
+          navigate('/');
+          return;
+        }
+
+        const habitsRes = await fetch('/api/habits', {
+          method: 'GET',
+          credentials: 'include',
+        });
+
+        if (habitsRes.ok) {
+          const data = await habitsRes.json();
+          setHabits(data);
+        } else {
+          setHabits([]);
+        }
+      } catch (err) {
+        console.warn('Error loading habits', err);
+        navigate('/');
+      }
+    };
+
+    verifyAndLoad();
+  }, [navigate]);
 
   // Toggle habit completion
   const toggleHabit = async (id) => {
@@ -41,7 +59,6 @@ export function Track() {
 
     const updatedHabit = updatedHabits.find((h) => h.id === id);
 
-    // Send update to server
     await fetch('/api/habit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -75,9 +92,11 @@ export function Track() {
   const deleteHabit = async (id) => {
     setHabits((prev) => prev.filter((h) => h.id !== id));
 
-    await fetch(`/api/habit/${id}`, {
+    await fetch('/api/habit', {
       method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
+      body: JSON.stringify({ id }),
     });
   };
 
@@ -95,34 +114,34 @@ export function Track() {
         <button onClick={addHabit}>Add Habit</button>
       </div>
 
-     <ul>
-  {habits.map((habit) => (
-    <li key={habit.id} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      <label style={{ flexGrow: 1 }}>
-        <input
-          type="checkbox"
-          checked={habit.done}
-          onChange={() => toggleHabit(habit.id)}
-        />
-        {habit.done ? <s>{habit.text}</s> : habit.text}
-      </label>
-      <button
-        onClick={() => deleteHabit(habit.id)}
-        style={{
-          fontSize: '0.8rem',
-          padding: '2px 6px',
-          backgroundColor: '#f44336',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-        }}
-      >
-        X
-      </button>
-    </li>
-  ))}
-</ul>
+      <ul>
+        {habits.map((habit) => (
+          <li key={habit.id} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <label style={{ flexGrow: 1 }}>
+              <input
+                type="checkbox"
+                checked={habit.done}
+                onChange={() => toggleHabit(habit.id)}
+              />
+              {habit.done ? <s>{habit.text}</s> : habit.text}
+            </label>
+            <button
+              onClick={() => deleteHabit(habit.id)}
+              style={{
+                fontSize: '0.8rem',
+                padding: '2px 6px',
+                backgroundColor: '#f44336',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+              }}
+            >
+              X
+            </button>
+          </li>
+        ))}
+      </ul>
 
       <div>
         <button onClick={handleLogout}>Logout</button>

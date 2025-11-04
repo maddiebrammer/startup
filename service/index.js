@@ -39,7 +39,7 @@ apiRouter.post('/auth/create', async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
   const token = uuid.v4();
 
-  const user = { email, password: hashedPassword, token };
+  const user = { email, password: hashedPassword, token, habits: [] };
   users.push(user);
 
   // Add initial score
@@ -118,9 +118,10 @@ apiRouter.post('/habit', verifyAuth, (req, res) => {
 // DELETE a habit
 apiRouter.delete('/habit', verifyAuth, (req, res) => {
   const { id } = req.body; // expect JSON body with { id }
-  habits = habits.filter((habit) => habit.id !== id);
-  res.send(habits); // return updated habits list
+  req.user.habits = req.user.habits.filter((habit) => habit.id !== id);
+  res.send(req.user.habits);
 });
+
 
 // ===============================
 // HELPER FUNCTIONS
@@ -153,23 +154,22 @@ function updateHabits(existingHabits, newHabit) {
 --------------------------------*/
 // Update scores based on completed habits for a user
 function updateScores(userEmail) {
-  const userHabits = habits.filter(h => h.user === userEmail && h.done);
+  const user = users.find(u => u.email === userEmail);
+  if (!user) return scores;
+
+  const completed = user.habits.filter(h => h.done).length;
   const existingScore = scores.find(s => s.user === userEmail);
 
   if (existingScore) {
-    existingScore.score = userHabits.length;
+    existingScore.score = completed;
   } else {
-    // In case somehow a user doesn't exist in scores yet
-    scores.push({ user: userEmail, score: userHabits.length });
+    scores.push({ user: userEmail, score: completed });
   }
 
-  // Sort descending
   scores.sort((a, b) => b.score - a.score);
   return scores;
 }
-apiRouter.get('/auth/verify', verifyAuth, (_req, res) => {
-  res.send({ ok: true });
-});
+
 
 apiRouter.get('/scores', verifyAuth, (_req, res) => {
   res.send(scores);
