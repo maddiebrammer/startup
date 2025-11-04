@@ -112,6 +112,13 @@ apiRouter.post('/habit', verifyAuth, (req, res) => {
   res.send(req.user.habits);
 });
 
+// DELETE a habit
+apiRouter.delete('/habit', verifyAuth, (req, res) => {
+  const { id } = req.body; // expect JSON body with { id }
+  habits = habits.filter((habit) => habit.id !== id);
+  res.send(habits); // return updated habits list
+});
+
 // ===============================
 // HELPER FUNCTIONS
 // ===============================
