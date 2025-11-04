@@ -145,7 +145,8 @@ app.use(function (err, req, res, next) {
   res.status(500).send({ type: err.name, message: err.message });
 });
 
-app.get('*', (_req, res) => {
+// Match all unmatched routes (works in Express 5)
+app.get(/.*/, (_req, res) => {
   res.send({ msg: 'NDGE Habit Tracker service running' });
 });
 
