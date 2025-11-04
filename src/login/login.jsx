@@ -1,23 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthState, saveUser, getUser, clearUser, getAuthState } from '../auth.js';
+import { AuthState, saveUser, getUser, clearUser } from '../auth.js';
 import './login.css';
 
 function Unauthenticated({ onLogin }) {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  // Handles login or registration by calling backend
+  const loginOrCreate = async (endpoint) => {
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        body: JSON.stringify({ email: userName, password }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (response.ok) {
+        saveUser(userName); // store locally
+        onLogin(userName);
+      } else {
+        const body = await response.json();
+        setError(`⚠ Error: ${body.msg}`);
+      }
+    } catch (err) {
+      setError(`⚠ Error: ${err.message}`);
+    }
+  };
+
+  const handleLogin = (e) => {
     e.preventDefault();
     if (userName && password) {
-      onLogin(userName);
+      loginOrCreate('/api/auth/login');
     } else {
-      alert('Please enter a username and password');
+      setError('Please enter username and password');
+    }
+  };
+
+  const handleCreate = () => {
+    if (userName && password) {
+      loginOrCreate('/api/auth/create');
+    } else {
+      setError('Please enter username and password');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="login-form">
+    <form onSubmit={handleLogin} className="login-form">
+      {error && <p className="error">{error}</p>}
       <div>
         <span>@</span>
         <input
@@ -37,18 +68,29 @@ function Unauthenticated({ onLogin }) {
         />
       </div>
       <button type="submit">Login</button>
-      <button type="button" onClick={() => alert('Mock: create account flow')}>
-        Create
+      <button type="button" onClick={handleCreate}>
+        Create Account
       </button>
     </form>
   );
 }
 
 function Authenticated({ userName, onLogout }) {
+  const logout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'DELETE' });
+    } catch (err) {
+      console.warn('Logout failed', err);
+    } finally {
+      clearUser();
+      onLogout();
+    }
+  };
+
   return (
     <div className="authenticated">
       <h2>Welcome, {userName}!</h2>
-      <button onClick={onLogout}>Logout</button>
+      <button onClick={logout}>Logout</button>
     </div>
   );
 }
@@ -56,14 +98,14 @@ function Authenticated({ userName, onLogout }) {
 export function Login() {
   const [authState, setAuthState] = useState(AuthState.Unknown);
   const [userName, setUserName] = useState('');
-  const navigate = useNavigate();
-
-  // Optional motivational quote placeholder
   const [quote, setQuote] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     setTimeout(() => {
-      setQuote('"Success is the sum of small efforts, repeated day in and day out." – Robert Collier');
+      setQuote(
+        '"Success is the sum of small efforts, repeated day in and day out." – Robert Collier'
+      );
     }, 1000);
   }, []);
 
@@ -83,10 +125,8 @@ export function Login() {
     setAuthState(newState);
 
     if (newState === AuthState.Authenticated) {
-      saveUser(user);
       navigate('/track');
     } else {
-      clearUser();
       navigate('/');
     }
   };
