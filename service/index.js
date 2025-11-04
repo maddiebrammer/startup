@@ -148,18 +148,25 @@ function updateHabits(existingHabits, newHabit) {
 /* -------------------------------
    Scores / Leaderboard Endpoints
 --------------------------------*/
-function updateScores(userEmail) {
-  // score = number of completed habits for this user
-  const userHabits = habits.filter(h => h.user === userEmail && h.done);
+// Update scores based on completed habits for a user
+function updateScores(userEmail, userName) {
+  // Count completed habits for this user
+  const completedCount = habits.filter(h => h.user === userEmail && h.done).length;
+
+  // Find existing score entry
   const existingScore = scores.find(s => s.user === userEmail);
   if (existingScore) {
-    existingScore.score = userHabits.length;
+    existingScore.score = completedCount;
+    existingScore.name = userName; // ensure frontend name is up-to-date
   } else {
-    scores.push({ user: userEmail, score: userHabits.length });
+    scores.push({ user: userEmail, name: userName, score: completedCount });
   }
 
-  // sort descending by score
+  // Sort descending by score
   scores.sort((a, b) => b.score - a.score);
+
+  // Optional: limit leaderboard to top 10
+  if (scores.length > 10) scores.length = 10;
 
   return scores;
 }
@@ -167,6 +174,21 @@ function updateScores(userEmail) {
 apiRouter.get('/scores', verifyAuth, (_req, res) => {
   res.send(scores);
 });
+
+// Update a user's score based on their completed habits
+apiRouter.post('/score', verifyAuth, (req, res) => {
+  const token = req.cookies[authCookieName];
+  const user = users.find(u => u.token === token);
+
+  if (!user) {
+    return res.status(401).send({ msg: 'Unauthorized' });
+  }
+
+  // Update the score using the helper function
+  const updatedScores = updateScores(user.email, user.email); // or user.name if you have it
+  res.send(updatedScores);
+});
+
 
 
 // ===============================
@@ -176,7 +198,7 @@ app.use(function (err, req, res, next) {
   res.status(500).send({ type: err.name, message: err.message });
 });
 
-// Match all unmatched routes (works in Express 5)
+// Match all unmatched routes
 app.get(/.*/, (_req, res) => {
   res.send({ msg: 'NDGE Habit Tracker service running' });
 });
