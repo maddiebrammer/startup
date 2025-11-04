@@ -17,7 +17,7 @@ let users = []; // Each user stores their own habits
 const apiRouter = express.Router();
 app.use('/api', apiRouter);
 
-const port = process.argv.length > 2 ? process.argv[2] : 3000;
+const port = process.argv.length > 2 ? process.argv[2] : 4000;
 
 // ===============================
 // AUTH ENDPOINTS
