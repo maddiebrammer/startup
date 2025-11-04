@@ -1,21 +1,29 @@
+// ===============================
+// NDGE Habit Tracker Service
+// ===============================
 const express = require('express');
 const app = express();
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
 const uuid = require('uuid');
-const authCookieName = 'token';
-app.use(cookieParser());
 
+const authCookieName = 'token';
+
+app.use(cookieParser());
 app.use(express.json());
 
-let users = [];
-let scores = [];
+let users = []; // Each user stores their own habits
 
-let apiRouter = express.Router();
-app.use(`/api`, apiRouter);
+const apiRouter = express.Router();
+app.use('/api', apiRouter);
 
 const port = process.argv.length > 2 ? process.argv[2] : 3000;
 
+// ===============================
+// AUTH ENDPOINTS
+// ===============================
+
+// Create new user
 apiRouter.post('/auth/create', async (req, res) => {
   const { email, password } = req.body;
 
@@ -24,18 +32,23 @@ apiRouter.post('/auth/create', async (req, res) => {
     return;
   }
 
-  // Hash password
   const hashedPassword = await bcrypt.hash(password, 10);
   const token = uuid.v4();
 
-  const user = { email, password: hashedPassword, token };
+  const user = {
+    email,
+    password: hashedPassword,
+    token,
+    habits: [],
+  };
+
   users.push(user);
 
-  // Set cookie
-  res.cookie(authCookieName, token, { httpOnly: true });
+  res.cookie(authCookieName, token, { httpOnly: true, sameSite: 'strict' });
   res.send({ email: user.email });
 });
 
+// Login existing user
 apiRouter.post('/auth/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -52,10 +65,11 @@ apiRouter.post('/auth/login', async (req, res) => {
   }
 
   user.token = uuid.v4();
-  res.cookie(authCookieName, user.token, { httpOnly: true });
+  res.cookie(authCookieName, user.token, { httpOnly: true, sameSite: 'strict' });
   res.send({ email: user.email });
 });
 
+// Logout user
 apiRouter.delete('/auth/logout', (req, res) => {
   const token = req.cookies[authCookieName];
   const user = users.find(u => u.token === token);
@@ -68,45 +82,76 @@ apiRouter.delete('/auth/logout', (req, res) => {
   res.status(204).end();
 });
 
+// ===============================
+// AUTH MIDDLEWARE
+// ===============================
 const verifyAuth = (req, res, next) => {
   const token = req.cookies[authCookieName];
   const user = users.find(u => u.token === token);
   if (user) {
+    req.user = user; // attach user to request
     next();
   } else {
     res.status(401).send({ msg: 'Unauthorized' });
   }
 };
 
+// ===============================
+// HABITS ENDPOINTS
+// ===============================
 
+// Get all habits for logged-in user
 apiRouter.get('/habits', verifyAuth, (req, res) => {
-  res.send(habits);
+  res.send(req.user.habits);
 });
 
+// Add or update a habit
 apiRouter.post('/habit', verifyAuth, (req, res) => {
-  habits = updateHabits(req.body);
-  res.send(habits);
+  const newHabit = req.body;
+  req.user.habits = updateHabits(req.user.habits, newHabit);
+  res.send(req.user.habits);
 });
 
-function updateHabits(newHabit) {
+// ===============================
+// HELPER FUNCTIONS
+// ===============================
+
+function updateHabits(existingHabits, newHabit) {
   let found = false;
-  for (const [i, existingHabit] of habits.entries()) {
+  for (const [i, existingHabit] of existingHabits.entries()) {
     if (existingHabit.id === newHabit.id) {
-      // Replace the existing habit with the updated one
-      habits[i] = newHabit;
+      existingHabits[i] = newHabit; // update
       found = true;
       break;
     }
   }
 
   if (!found) {
-    habits.push(newHabit);
+    existingHabits.push(newHabit);
   }
 
-  // Optional: limit to 20 habits
-  if (habits.length > 20) {
-    habits.length = 20;
+  // limit habits to 20 per user
+  if (existingHabits.length > 20) {
+    existingHabits.length = 20;
   }
 
-  return habits;
+  return existingHabits;
 }
+
+// ===============================
+// ERROR HANDLER & DEFAULT ROUTE
+// ===============================
+app.use(function (err, req, res, next) {
+  res.status(500).send({ type: err.name, message: err.message });
+});
+
+app.get('*', (_req, res) => {
+  res.send({ msg: 'NDGE Habit Tracker service running' });
+});
+
+// ===============================
+// SERVER START
+// ===============================
+app.listen(port, () => {
+  console.log(`Listening on port ${port}`);
+});
