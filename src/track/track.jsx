@@ -90,21 +90,34 @@ export function Track() {
         <button onClick={addHabit}>Add Habit</button>
       </div>
 
-      <ul>
-        {habits.map((habit) => (
-          <li key={habit.id}>
-            <label>
-              <input
-                type="checkbox"
-                checked={habit.done}
-                onChange={() => toggleHabit(habit.id)}
-              />
-              {habit.done ? <s>{habit.text}</s> : habit.text}
-            </label>
-            <button onClick={() => deleteHabit(habit.id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
+     <ul>
+  {habits.map((habit) => (
+    <li key={habit.id} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <label style={{ flexGrow: 1 }}>
+        <input
+          type="checkbox"
+          checked={habit.done}
+          onChange={() => toggleHabit(habit.id)}
+        />
+        {habit.done ? <s>{habit.text}</s> : habit.text}
+      </label>
+      <button
+        onClick={() => deleteHabit(habit.id)}
+        style={{
+          fontSize: '0.8rem',
+          padding: '2px 6px',
+          backgroundColor: '#f44336',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+        }}
+      >
+        X
+      </button>
+    </li>
+  ))}
+</ul>
 
       <div>
         <button onClick={handleLogout}>Logout</button>
