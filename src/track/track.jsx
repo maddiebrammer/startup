@@ -1,92 +1,79 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { clearUser } from '../auth.js';
+import { clearUser, getUser } from '../auth.js';
 import './track.css';
 
 export function Track() {
   const navigate = useNavigate();
+  const userName = getUser();
+
+  const [habits, setHabits] = useState([]);
+  const [newHabitText, setNewHabitText] = useState('');
 
   const handleLogout = () => {
     clearUser();
     navigate('/');
   };
 
-  const defaultHabits = [
-    { id: 1, text: 'Walk the dog', done: false },
-    { id: 2, text: 'Eat Breakfast', done: false },
-    { id: 3, text: 'Make a Healthy Dinner', done: false },
-    { id: 4, text: 'Go to bed at 10', done: false },
-    { id: 5, text: 'Wake up at 7', done: false },
-    { id: 6, text: 'Make Bed', done: false },
-    { id: 7, text: 'Brush teeth', done: false },
-  ];
-
-  const [habits, setHabits] = useState(defaultHabits);
-  const [newHabitText, setNewHabitText] = useState('');
-
-  // Load habits from server
+  // Load habits from server on mount
   useEffect(() => {
-    fetch('/api/habits', { credentials: 'include' })
+    fetch('/api/habits', {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include', // send cookies
+    })
       .then((res) => res.json())
-      .then((data) => {
-        if (data.length) setHabits(data);
-      })
-      .catch((err) => console.error('Error fetching habits:', err));
+      .then((data) => setHabits(data))
+      .catch(() => setHabits([]));
   }, []);
 
-  // Save a single habit to server
-  const saveHabit = async (habit) => {
-    try {
-      await fetch('/api/habit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(habit),
-      });
-    } catch (err) {
-      console.error('Error saving habit:', err);
-    }
-  };
-
-  const toggleHabit = (id) => {
-    setHabits((prev) =>
-      prev.map((habit) => {
-        if (habit.id === id) {
-          const updated = { ...habit, done: !habit.done };
-          saveHabit(updated);
-          return updated;
-        }
-        return habit;
-      })
+  // Toggle habit completion
+  const toggleHabit = async (id) => {
+    const updatedHabits = habits.map((habit) =>
+      habit.id === id ? { ...habit, done: !habit.done } : habit
     );
+    setHabits(updatedHabits);
+
+    const updatedHabit = updatedHabits.find((h) => h.id === id);
+
+    // Send update to server
+    await fetch('/api/habit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(updatedHabit),
+    });
   };
 
-  // Add new habit
-  const addHabit = () => {
+  // Add a new habit
+  const addHabit = async () => {
     if (!newHabitText.trim()) return;
+
     const newHabit = {
-      id: Date.now(), // simple unique id
-      text: newHabitText,
+      id: Date.now(),
+      text: newHabitText.trim(),
       done: false,
     };
+
     setHabits((prev) => [...prev, newHabit]);
-    saveHabit(newHabit);
     setNewHabitText('');
+
+    await fetch('/api/habit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(newHabit),
+    });
   };
 
-  // Delete habit
+  // Delete a habit
   const deleteHabit = async (id) => {
-    setHabits((prev) => prev.filter((habit) => habit.id !== id));
-    try {
-      await fetch(`/api/habit`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ id }),
-      });
-    } catch (err) {
-      console.error('Error deleting habit:', err);
-    }
+    setHabits((prev) => prev.filter((h) => h.id !== id));
+
+    await fetch(`/api/habit/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
   };
 
   return (
@@ -100,7 +87,7 @@ export function Track() {
           value={newHabitText}
           onChange={(e) => setNewHabitText(e.target.value)}
         />
-        <button onClick={addHabit}>Add</button>
+        <button onClick={addHabit}>Add Habit</button>
       </div>
 
       <ul>
@@ -114,14 +101,12 @@ export function Track() {
               />
               {habit.done ? <s>{habit.text}</s> : habit.text}
             </label>
-            <button className="delete-btn" onClick={() => deleteHabit(habit.id)}>
-              ❌
-            </button>
+            <button onClick={() => deleteHabit(habit.id)}>Delete</button>
           </li>
         ))}
       </ul>
 
-      <div style={{ marginTop: '2rem' }}>
+      <div>
         <button onClick={handleLogout}>Logout</button>
       </div>
     </main>
