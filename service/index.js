@@ -14,7 +14,8 @@ app.use(express.json());
 
 app.use(express.static('public'));
 
-let users = []; // Each user stores their own habits
+let users = []; 
+let scores = [];
 
 const apiRouter = express.Router();
 app.use('/api', apiRouter);
@@ -34,21 +35,21 @@ apiRouter.post('/auth/create', async (req, res) => {
     return;
   }
 
+  // Hash password and create token
   const hashedPassword = await bcrypt.hash(password, 10);
   const token = uuid.v4();
 
-  const user = {
-    email,
-    password: hashedPassword,
-    token,
-    habits: [],
-  };
-
+  const user = { email, password: hashedPassword, token };
   users.push(user);
 
-  res.cookie(authCookieName, token, { httpOnly: true, sameSite: 'strict' });
+  // Add initial score
+  scores.push({ user: email, score: 0 });
+
+  // Set auth cookie
+  res.cookie(authCookieName, token, { httpOnly: true });
   res.send({ email: user.email });
 });
+
 
 // Login existing user
 apiRouter.post('/auth/login', async (req, res) => {
@@ -151,27 +152,24 @@ function updateHabits(existingHabits, newHabit) {
    Scores / Leaderboard Endpoints
 --------------------------------*/
 // Update scores based on completed habits for a user
-function updateScores(userEmail, userName) {
-  // Count completed habits for this user
-  const completedCount = habits.filter(h => h.user === userEmail && h.done).length;
-
-  // Find existing score entry
+function updateScores(userEmail) {
+  const userHabits = habits.filter(h => h.user === userEmail && h.done);
   const existingScore = scores.find(s => s.user === userEmail);
+
   if (existingScore) {
-    existingScore.score = completedCount;
-    existingScore.name = userName; // ensure frontend name is up-to-date
+    existingScore.score = userHabits.length;
   } else {
-    scores.push({ user: userEmail, name: userName, score: completedCount });
+    // In case somehow a user doesn't exist in scores yet
+    scores.push({ user: userEmail, score: userHabits.length });
   }
 
-  // Sort descending by score
+  // Sort descending
   scores.sort((a, b) => b.score - a.score);
-
-  // Optional: limit leaderboard to top 10
-  if (scores.length > 10) scores.length = 10;
-
   return scores;
 }
+apiRouter.get('/auth/verify', verifyAuth, (_req, res) => {
+  res.send({ ok: true });
+});
 
 apiRouter.get('/scores', verifyAuth, (_req, res) => {
   res.send(scores);

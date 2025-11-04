@@ -128,9 +128,22 @@ export function Login() {
   useEffect(() => {
     const user = getUser();
     if (user) {
-      setUserName(user);
-      setAuthState(AuthState.Authenticated);
-      navigate('/track');
+      // Verify session with backend
+      fetch('/api/auth/verify', { method: 'GET', credentials: 'include' })
+        .then(res => {
+          if (res.ok) {
+            setUserName(user);
+            setAuthState(AuthState.Authenticated);
+            navigate('/track');
+          } else {
+            clearUser();
+            setAuthState(AuthState.Unauthenticated);
+          }
+        })
+        .catch(() => {
+          clearUser();
+          setAuthState(AuthState.Unauthenticated);
+        });
     } else {
       setAuthState(AuthState.Unauthenticated);
     }

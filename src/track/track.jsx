@@ -15,6 +15,11 @@ export function Track() {
     navigate('/');
   };
 
+  useEffect(() => {
+  fetch('/api/auth/verify', { method: 'GET', credentials: 'include' })
+    .catch(() => navigate('/')); // redirect to login if not authenticated
+}, [navigate]);
+
   // Load habits from server on mount
   useEffect(() => {
     fetch('/api/habits', {

@@ -13,6 +13,13 @@ export function Leaderboard() {
     }
   }, []);
 
+  useEffect(() => {
+    fetch('/api/scores')
+      .then(res => res.json())
+      .then(data => setPlayers(data));
+  }, []);
+
+
   // Fetch leaderboard scores from backend
   const fetchLeaderboard = async () => {
     try {
