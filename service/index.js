@@ -145,6 +145,30 @@ function updateHabits(existingHabits, newHabit) {
   return existingHabits;
 }
 
+/* -------------------------------
+   Scores / Leaderboard Endpoints
+--------------------------------*/
+function updateScores(userEmail) {
+  // score = number of completed habits for this user
+  const userHabits = habits.filter(h => h.user === userEmail && h.done);
+  const existingScore = scores.find(s => s.user === userEmail);
+  if (existingScore) {
+    existingScore.score = userHabits.length;
+  } else {
+    scores.push({ user: userEmail, score: userHabits.length });
+  }
+
+  // sort descending by score
+  scores.sort((a, b) => b.score - a.score);
+
+  return scores;
+}
+
+apiRouter.get('/scores', verifyAuth, (_req, res) => {
+  res.send(scores);
+});
+
+
 // ===============================
 // ERROR HANDLER & DEFAULT ROUTE
 // ===============================
