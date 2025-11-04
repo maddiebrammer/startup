@@ -180,6 +180,7 @@ function updateScores(userEmail) {
       score: completed,
     });
   }
+  console.log('SCORES ARRAY:', scores);
 
   scores.sort((a, b) => b.score - a.score);
   return scores;

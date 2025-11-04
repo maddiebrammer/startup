@@ -71,10 +71,15 @@ export function Leaderboard() {
           {sortedPlayers.map((player, index) => (
             <tr
               key={index}
-              className={player.user === currentUser ? 'highlight-row' : ''}
+              className={
+                player.name === currentUser.split('@')[0] || player.user === currentUser
+                  ? 'highlight-row'
+                  : ''
+              }
             >
               <td>
-                <div className="row-card">{player.user}</div>
+                <div className="row-card">{player.name || 
+                player.user.split('@')[0] || 'Unknown'}</div>
               </td>
               <td>
                 <div className="row-card">{player.score}</div>
