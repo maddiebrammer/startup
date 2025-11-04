@@ -107,6 +107,18 @@ const toggleHabit = async (id) => {
       credentials: 'include',
       body: JSON.stringify({ id }),
     });
+
+    // Recalculate user's score
+    const res = await fetch('/api/score', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+    });
+
+    if (res.ok) {
+      const updatedScores = await res.json();
+      setScores(updatedScores); // <-- this updates the leaderboard
+    }
   };
 
   return (
