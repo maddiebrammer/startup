@@ -122,16 +122,17 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 - [x] **All functionality implemented or mocked out** - I implemented all main functionality using React components (Login, Track, Leaderboard) and mocked out future features such as a motivational quote API using setTimeout.
 - [x] **Hooks** - I used useState to manage component state (e.g., habits, login inputs) and useEffect to handle lifecycle events like fetching a motivational quote.
 
-## 🚀 Service deliverable
+## 🚀 Service Deliverable
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Node.js/Express HTTP service** - I did not complete this part of the deliverable.
-- [ ] **Static middleware for frontend** - I did not complete this part of the deliverable.
-- [ ] **Calls to third party endpoints** - I did not complete this part of the deliverable.
-- [ ] **Backend service endpoints** - I did not complete this part of the deliverable.
-- [ ] **Frontend calls service endpoints** - I did not complete this part of the deliverable.
-- [ ] **Supports registration, login, logout, and restricted endpoint** - I did not complete this part of the deliverable.
+- [x] **Node.js/Express HTTP service** – Implemented a full Express backend to handle authentication, habit management, and score tracking.
+- [x] **Static middleware for frontend** – Configured Express to serve the React frontend with static middleware.
+- [x] **Calls to third party endpoints** – I implemented a 3rd party inspirational quote which updates on the login page.
+- [x] **Backend service endpoints** – Added RESTful routes for `/register`, `/login`, `/logout`, `/habit`, and `/score` to manage user data and leaderboard functionality.
+- [x] **Frontend calls service endpoints** – Integrated frontend fetch requests for registration, login/logout, adding/deleting habits, and updating scores.
+- [x] **Supports registration, login, logout, and restricted endpoint** – Implemented user authentication using cookies and tokens, ensuring access control for habit and score routes.
+
 
 
 ## 🚀 DB deliverable
