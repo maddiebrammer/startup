@@ -49,8 +49,8 @@ apiRouter.post('/auth/create', async (req, res) => {
 // Login existing user
 apiRouter.post('/auth/login', async (req, res) => {
   const { email, password } = req.body;
+  const user = await db.getUser(email);
 
-  const user = users.find(u => u.email === email);
   if (!user) {
     res.status(401).send({ msg: 'Unauthorized' });
     return;
@@ -63,17 +63,20 @@ apiRouter.post('/auth/login', async (req, res) => {
   }
 
   user.token = uuid.v4();
+  await db.updateUser(user);
+
   res.cookie(authCookieName, user.token, { httpOnly: true, sameSite: 'strict' });
   res.send({ email: user.email });
 });
 
 // Logout user
-apiRouter.delete('/auth/logout', (req, res) => {
+apiRouter.delete('/auth/logout', async (req, res) => {
   const token = req.cookies[authCookieName];
-  const user = users.find(u => u.token === token);
+  const user = await db.getUserByToken(token);
 
   if (user) {
     delete user.token;
+    await db.updateUser(user);
   }
 
   res.clearCookie(authCookieName);
