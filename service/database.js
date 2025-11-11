@@ -5,7 +5,7 @@ const url = `mongodb+srv://${config.userName}:${config.password}@${config.hostna
 const client = new MongoClient(url);
 const db = client.db('ndge');
 const userCollection = db.collection('user');
-const leaderboardCollection = db.collection('leaderboard');
+const leaderboardCollection = db.collection('scores');
 
 // This will asynchronously test the connection and exit the process if it fails
 (async function testConnection() {
@@ -36,3 +36,29 @@ async function addUser(user) {
 async function updateUser(user) {
   await usersCollection.updateOne({ email: user.email }, { $set: user });
 }
+
+// -------------------------------
+// SCORE FUNCTIONS
+// -------------------------------
+async function getScores() {
+  return scoresCollection.find().sort({ score: -1 }).toArray();
+}
+
+async function updateScore(userEmail, displayName, scoreValue) {
+  await scoresCollection.updateOne(
+    { user: userEmail },
+    { $set: { name: displayName, score: scoreValue } },
+    { upsert: true }
+  );
+  const allScores = await getScores();
+  return allScores;
+}
+
+module.exports = {
+  getUser,
+  getUserByToken,
+  addUser,
+  updateUser,
+  getScores,
+  updateScore,
+};
