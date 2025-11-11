@@ -1,21 +1,18 @@
 // ===============================
-// NDGE Habit Tracker Service
+// NDGE Habit Tracker Service with MongoDB
 // ===============================
 const express = require('express');
-const app = express();
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
 const uuid = require('uuid');
+const db = require('./database');
 
+const app = express();
 const authCookieName = 'token';
 
 app.use(cookieParser());
 app.use(express.json());
-
 app.use(express.static('public'));
-
-let users = []; 
-let scores = [];
 
 const apiRouter = express.Router();
 app.use('/api', apiRouter);
@@ -30,31 +27,22 @@ const port = process.argv.length > 2 ? process.argv[2] : 4000;
 apiRouter.post('/auth/create', async (req, res) => {
   const { email, password } = req.body;
 
-  if (users.find(u => u.email === email)) {
+  const existingUser = await db.getUser(email);
+  if (existingUser) {
     res.status(409).send({ msg: 'Existing user' });
     return;
   }
 
-  // Hash password and create token
   const hashedPassword = await bcrypt.hash(password, 10);
   const token = uuid.v4();
-  
-  let name;
-  if (email.includes("@")) {
-    name = email.split('@')[0];
-  } else {
-    name = email
-  }
+  const name = email.includes('@') ? email.split('@')[0] : email;
 
   const user = { email, name, password: hashedPassword, token, habits: [] };
-  users.push(user);
+  await db.addUser(user);
+  await db.updateScore(email, name, 0); // initialize score
 
-  // Add initial score
-  scores.push({ user: email, score: 0 });
-
-  // Set auth cookie
   res.cookie(authCookieName, token, { httpOnly: true });
-  res.send({ email: user.email });
+  res.send({ email });
 });
 
 
