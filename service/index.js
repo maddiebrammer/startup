@@ -86,16 +86,16 @@ apiRouter.delete('/auth/logout', async (req, res) => {
 // ===============================
 // AUTH MIDDLEWARE
 // ===============================
-const verifyAuth = (req, res, next) => {
+async function verifyAuth(req, res, next) {
   const token = req.cookies[authCookieName];
-  const user = users.find(u => u.token === token);
+  const user = await db.getUserByToken(token);
   if (user) {
-    req.user = user; // attach user to request
+    req.user = user;
     next();
   } else {
     res.status(401).send({ msg: 'Unauthorized' });
   }
-};
+}
 
 // ===============================
 // HABITS ENDPOINTS
