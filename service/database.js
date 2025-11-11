@@ -17,3 +17,22 @@ const leaderboardCollection = db.collection('leaderboard');
     process.exit(1);
   }
 })();
+
+// -------------------------------
+// USER FUNCTIONS
+// -------------------------------
+async function getUser(email) {
+  return usersCollection.findOne({ email });
+}
+
+async function getUserByToken(token) {
+  return usersCollection.findOne({ token });
+}
+
+async function addUser(user) {
+  await usersCollection.insertOne(user);
+}
+
+async function updateUser(user) {
+  await usersCollection.updateOne({ email: user.email }, { $set: user });
+}
