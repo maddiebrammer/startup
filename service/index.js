@@ -100,23 +100,21 @@ async function verifyAuth(req, res, next) {
 // ===============================
 // HABITS ENDPOINTS
 // ===============================
-
-// Get all habits for logged-in user
-apiRouter.get('/habits', verifyAuth, (req, res) => {
-  res.send(req.user.habits);
+apiRouter.get('/habits', verifyAuth, async (req, res) => {
+  res.send(req.user.habits || []);
 });
 
-// Add or update a habit
-apiRouter.post('/habit', verifyAuth, (req, res) => {
+apiRouter.post('/habit', verifyAuth, async (req, res) => {
   const newHabit = req.body;
-  req.user.habits = updateHabits(req.user.habits, newHabit);
+  req.user.habits = updateHabits(req.user.habits || [], newHabit);
+  await db.updateUser(req.user);
   res.send(req.user.habits);
 });
 
-// DELETE a habit
-apiRouter.delete('/habit', verifyAuth, (req, res) => {
-  const { id } = req.body; // expect JSON body with { id }
-  req.user.habits = req.user.habits.filter((habit) => habit.id !== id);
+apiRouter.delete('/habit', verifyAuth, async (req, res) => {
+  const { id } = req.body;
+  req.user.habits = (req.user.habits || []).filter(h => h.id !== id);
+  await db.updateUser(req.user);
   res.send(req.user.habits);
 });
 
