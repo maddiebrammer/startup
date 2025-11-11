@@ -1,11 +1,11 @@
 const { MongoClient } = require('mongodb');
 const config = require('./dbConfig.json');
 
-const url = `mongodb+srv://${config.userName}:${config.password}@${config.hostname}`;
+const url = `mongodb+srv://${config.username}:${config.password}@${config.hostname}`;
 const client = new MongoClient(url);
 const db = client.db('ndge');
-const userCollection = db.collection('user');
-const leaderboardCollection = db.collection('scores');
+const usersCollection = db.collection('user');
+const scoresCollection = db.collection('scores');
 
 // This will asynchronously test the connection and exit the process if it fails
 (async function testConnection() {
