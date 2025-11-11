@@ -2,3 +2,4 @@
 .mypy_cache
 node_modules
 dbConfig.json
+test.http
