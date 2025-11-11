@@ -120,80 +120,29 @@ apiRouter.delete('/habit', verifyAuth, async (req, res) => {
 
 
 // ===============================
-// HELPER FUNCTIONS
+// SCORES ENDPOINTS
 // ===============================
-
 function updateHabits(existingHabits, newHabit) {
-  let found = false;
-  for (const [i, existingHabit] of existingHabits.entries()) {
-    if (existingHabit.id === newHabit.id) {
-      existingHabits[i] = newHabit; // update
-      found = true;
-      break;
-    }
-  }
+  const idx = existingHabits.findIndex(h => h.id === newHabit.id);
+  if (idx >= 0) existingHabits[idx] = newHabit;
+  else existingHabits.push(newHabit);
 
-  if (!found) {
-    existingHabits.push(newHabit);
-  }
-
-  // limit habits to 20 per user
-  if (existingHabits.length > 20) {
-    existingHabits.length = 20;
-  }
-
+  if (existingHabits.length > 20) existingHabits.length = 20;
   return existingHabits;
 }
 
-/* -------------------------------
-   Scores / Leaderboard Endpoints
---------------------------------*/
-// Update scores based on completed habits for a user
-function updateScores(userEmail) {
-  const user = users.find(u => u.email === userEmail);
-  if (!user) return scores;
-
-  const completed = user.habits.filter(h => h.done).length;
-  const existingScore = scores.find(s => s.user === userEmail);
-
-  // Use the user's real name, or a fallback
-  const displayName = user.name || user.email.split('@')[0] || 'Unknown';
-
-  if (existingScore) {
-    existingScore.score = completed;
-    existingScore.name = displayName;
-  } else {
-    scores.push({
-      user: userEmail,
-      name: displayName,
-      score: completed,
-    });
-  }
-  console.log('SCORES ARRAY:', scores);
-
-  scores.sort((a, b) => b.score - a.score);
-  return scores;
-}
-
-
-apiRouter.get('/scores', verifyAuth, (_req, res) => {
+apiRouter.get('/scores', verifyAuth, async (_req, res) => {
+  const scores = await db.getScores();
   res.send(scores);
 });
 
-// Update a user's score based on their completed habits
-apiRouter.post('/score', verifyAuth, (req, res) => {
-  const token = req.cookies[authCookieName];
-  const user = users.find(u => u.token === token);
-
-  if (!user) {
-    return res.status(401).send({ msg: 'Unauthorized' });
-  }
-
-  const updatedScores = updateScores(user.email);
+apiRouter.post('/score', verifyAuth, async (req, res) => {
+  const user = req.user;
+  const completed = (user.habits || []).filter(h => h.done).length;
+  const displayName = user.name || user.email.split('@')[0] || 'Unknown';
+  const updatedScores = await db.updateScore(user.email, displayName, completed);
   res.status(200).send(updatedScores);
 });
-
-
 
 // ===============================
 // ERROR HANDLER & DEFAULT ROUTE
@@ -202,14 +151,10 @@ app.use(function (err, req, res, next) {
   res.status(500).send({ type: err.name, message: err.message });
 });
 
-// Return the application's default page if the path is unknown
 app.use((_req, res) => {
   res.sendFile('index.html', { root: 'public' });
 });
 
-// ===============================
-// SERVER START
-// ===============================
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });
