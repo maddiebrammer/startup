@@ -3,20 +3,21 @@ const config = require('./dbConfig.json');
 
 const url = `mongodb+srv://${config.username}:${config.password}@${config.hostname}`;
 const client = new MongoClient(url);
-const db = client.db('ndge');
-const usersCollection = db.collection('user');
-const scoresCollection = db.collection('scores');
 
-// This will asynchronously test the connection and exit the process if it fails
-(async function testConnection() {
+let db, usersCollection, scoresCollection;
+
+async function connectDB() {
   try {
-    await db.command({ ping: 1 });
-    console.log(`Connect to database`);
+    await client.connect();
+    db = client.db('ndge');
+    usersCollection = db.collection('user');
+    scoresCollection = db.collection('scores');
+    console.log('Connected to MongoDB');
   } catch (ex) {
-    console.log(`Unable to connect to database with ${url} because ${ex.message}`);
+    console.error(`Unable to connect to database with ${url} because ${ex.message}`);
     process.exit(1);
   }
-})();
+}
 
 // -------------------------------
 // USER FUNCTIONS
@@ -50,11 +51,11 @@ async function updateScore(userEmail, displayName, scoreValue) {
     { $set: { name: displayName, score: scoreValue } },
     { upsert: true }
   );
-  const allScores = await getScores();
-  return allScores;
+  return getScores();
 }
 
 module.exports = {
+  connectDB,
   getUser,
   getUserByToken,
   addUser,

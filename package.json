@@ -1,5 +1,32 @@
 {
   "dependencies": {
-    "mongodb": "^7.0.0"
-  }
+    "bootstrap": "^5.3.8",
+    "mongodb": "^7.0.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.9.5"
+  },
+  "devDependencies": {
+    "vite": "^7.2.2"
+  },
+  "name": "startup",
+  "version": "1.0.0",
+  "description": "[My Notes](notes.md)",
+  "main": "vite.config.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maddiebrammer/startup.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/maddiebrammer/startup/issues"
+  },
+  "homepage": "https://github.com/maddiebrammer/startup#readme"
 }
