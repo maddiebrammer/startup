@@ -164,6 +164,22 @@ apiRouter.post('/score', verifyAuth, async (req, res) => {
 // ===============================
 // ERROR HANDLER & DEFAULT ROUTE
 // ===============================
+
+// Verify user session
+apiRouter.get('/auth/verify', async (req, res) => {
+  try {
+    const token = req.cookies[authCookieName];
+    const user = await db.getUserByToken(token);
+    if (user) {
+      res.status(200).send({ email: user.email });
+    } else {
+      res.status(401).send({ msg: 'Unauthorized' });
+    }
+  } catch (err) {
+    res.status(500).send({ type: err.name, message: err.message });
+  }
+});
+
 app.use((err, req, res, next) => {
   res.status(500).send({ type: err.name, message: err.message });
 });
@@ -184,9 +200,15 @@ app.use((_req, res) => {
 });
 
 async function startServer() {
-  app.listen(port, () => {
-    console.log(`🚀 Listening on port ${port}`);
-  });
+  try {
+    await db.connectDB(); 
+    app.listen(port, () => {
+      console.log(`🚀 Listening on port ${port}`);
+    });
+  } catch (err) {
+    console.error('❌ Failed to connect to MongoDB:', err.message);
+    process.exit(1);
+  }
 }
 
 startServer();

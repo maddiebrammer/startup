@@ -13,16 +13,19 @@ function Unauthenticated({ onLogin }) {
     try {
       const response = await fetch(endpoint, {
         method: 'POST',
-        body: JSON.stringify({ email: userName, password }),
+        body: JSON.stringify({ email: userName, password }), // <-- confirm backend expects "email" or "username"
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // <--- IMPORTANT: include cookies for session
       });
 
       if (response.ok) {
-        saveUser(userName); // store locally
+        // Optionally read response JSON if backend returns user info
+        // const body = await response.json();
+        saveUser(userName); // store locally after success
         onLogin(userName);
       } else {
         const body = await response.json();
-        setError(`⚠ Error: ${body.msg}`);
+        setError(`⚠ Error: ${body.msg || body.message || response.statusText}`);
       }
     } catch (err) {
       setError(`⚠ Error: ${err.message}`);
@@ -76,16 +79,23 @@ function Unauthenticated({ onLogin }) {
 }
 
 function Authenticated({ userName, onLogout }) {
-  const logout = async () => {
-    try {
-      await fetch('/api/auth/logout', { method: 'DELETE' });
-    } catch (err) {
-      console.warn('Logout failed', err);
-    } finally {
-      clearUser();
-      onLogout();
-    }
-  };
+    const logout = async () => {
+      try {
+        const res = await fetch('/api/auth/logout', {
+          method: 'DELETE',
+          credentials: 'include', // ensure the session cookie is sent so server can clear it
+        });
+        if (!res.ok) {
+          console.warn('Logout endpoint returned non-OK:', res.status);
+        }
+      } catch (err) {
+        console.warn('Logout failed', err);
+      } finally {
+        clearUser();
+        onLogout();
+      }
+    };
+
 
   return (
     <div className="authenticated">
