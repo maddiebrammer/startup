@@ -156,12 +156,26 @@ apiRouter.post('/score', verifyAuth, async (req, res) => {
     const user = req.user;
     const completed = (user.habits || []).filter(h => h.done).length;
     const displayName = user.name || user.email.split('@')[0] || 'Unknown';
+
     const updatedScores = await db.updateScore(user.email, displayName, completed);
+
+    //broadcast score update
+    const message = JSON.stringify({
+      type: "scoreUpdate",
+      user: displayName,
+      score: completed
+    });
+
+    req.app.get('wss').clients.forEach((client) => {
+      if (client.readyState === 1) client.send(message);
+    });
+
     res.status(200).send(updatedScores);
   } catch (err) {
     res.status(500).send({ type: err.name, message: err.message });
   }
 });
+
 
 // ===============================
 // ERROR HANDLER & DEFAULT ROUTE
@@ -210,7 +224,7 @@ async function startServer() {
 
     // Attach websocket proxy
     peerProxy(httpService);
-    
+
   } catch (err) {
     console.error('❌ Failed to connect to MongoDB:', err.message);
     process.exit(1);
