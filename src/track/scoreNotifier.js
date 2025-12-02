@@ -1,6 +1,6 @@
 class ScoreNotifier {
   constructor() {
-    const BACKEND_PORT = 4000; // <-- your Node.js server port
+    const BACKEND_PORT = 4000; 
     const protocol = window.location.protocol === 'http:' ? 'ws' : 'wss';
 
     this.socket = new WebSocket(`${protocol}://${window.location.hostname}:${BACKEND_PORT}/ws`);
@@ -9,12 +9,14 @@ class ScoreNotifier {
     this.socket.onopen = () => console.log("WS connected");
     this.socket.onerror = (e) => console.log("WS error", e);
 
-    this.socket.onmessage = async (msg) => {
-      try {
-        const event = JSON.parse(await msg.data.text());
-        this.handlers.forEach(handler => handler(event));
-      } catch {}
-    };
+    this.socket.onmessage = (msg) => {
+        try {
+            const event = JSON.parse(msg.data);
+            this.handlers.forEach(handler => handler(event));
+        } catch (err) {
+            console.error('Failed to parse WS message', err);
+        }
+        };
   }
 
   addHandler(handler) {
