@@ -1,9 +1,9 @@
 class ScoreNotifier {
   constructor() {
-    let port = window.location.port;
+    const BACKEND_PORT = 4000; // <-- your Node.js server port
     const protocol = window.location.protocol === 'http:' ? 'ws' : 'wss';
 
-    this.socket = new WebSocket(`${protocol}://${window.location.hostname}:${port}/ws`);
+    this.socket = new WebSocket(`${protocol}://${window.location.hostname}:${BACKEND_PORT}/ws`);
     this.handlers = [];
 
     this.socket.onopen = () => console.log("WS connected");

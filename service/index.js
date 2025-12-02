@@ -159,17 +159,18 @@ apiRouter.post('/score', verifyAuth, async (req, res) => {
 
     const updatedScores = await db.updateScore(user.email, displayName, completed);
 
-    wss.on('connection', () => console.log("Client connected"));
+    const wss = req.app.get('wss');
 
-    //broadcast score update
     const message = JSON.stringify({
       type: "scoreUpdate",
       user: displayName,
       score: completed
     });
 
-    req.app.get('wss').clients.forEach((client) => {
-      if (client.readyState === 1) client.send(message);
+    wss.clients.forEach(client => {
+      if (client.readyState === 1) {
+        client.send(message);
+      }
     });
 
     res.status(200).send(updatedScores);

@@ -7,39 +7,38 @@ function peerProxy(httpServer, app) {
 
     httpServer.on('upgrade', (req, socket, head) => {
         if (req.url === '/ws') {
-        wss.handleUpgrade(req, socket, head, (ws) => {
-            wss.emit('connection', ws, req);
-        });
+            wss.handleUpgrade(req, socket, head, (ws) => {
+                wss.emit('connection', ws, req);
+            });
         } else {
-        socket.destroy();
+            socket.destroy();
         }
     });
 
     wss.on('connection', (ws) => {
+        console.log("WS client connected");
         ws.isAlive = true;
 
-    ws.on('message', (data) => {
-      // Forward messages to all other connected clients
-      wss.clients.forEach((client) => {
-        if (client !== ws && client.readyState === WebSocket.OPEN) {
-          client.send(data);
-        }
-      });
+        ws.on('message', (data) => {
+            wss.clients.forEach((client) => {
+                if (client !== ws && client.readyState === WebSocket.OPEN) {
+                    client.send(data);
+                }
+            });
+        });
+
+        ws.on('pong', () => {
+            ws.isAlive = true;
+        });
     });
 
-    ws.on('pong', () => {
-      ws.isAlive = true;
-    });
-  });
-
-  // Ping clients to ensure they are alive
-  setInterval(() => {
-    wss.clients.forEach((client) => {
-      if (!client.isAlive) return client.terminate();
-      client.isAlive = false;
-      client.ping();
-    });
-  }, 10000);
+    setInterval(() => {
+        wss.clients.forEach((client) => {
+            if (!client.isAlive) return client.terminate();
+            client.isAlive = false;
+            client.ping();
+        });
+    }, 10000);
 }
 
 module.exports = { peerProxy };
