@@ -6,6 +6,9 @@ class ScoreNotifier {
     this.socket = new WebSocket(`${protocol}://${window.location.hostname}:${port}/ws`);
     this.handlers = [];
 
+    this.socket.onopen = () => console.log("WS connected");
+    this.socket.onerror = (e) => console.log("WS error", e);
+
     this.socket.onmessage = async (msg) => {
       try {
         const event = JSON.parse(await msg.data.text());

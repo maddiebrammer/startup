@@ -1,13 +1,22 @@
 const { WebSocketServer, WebSocket } = require('ws');
 
 function peerProxy(httpServer, app) {
-  const wss = new WebSocketServer({ server: httpServer });
+    const wss = new WebSocketServer({ noServer: true });
 
-  // Store reference so Express routes can broadcast
-  app.set('wss', wss);
+    app.set('wss', wss);
 
-  wss.on('connection', (ws) => {
-    ws.isAlive = true;
+    httpServer.on('upgrade', (req, socket, head) => {
+        if (req.url === '/ws') {
+        wss.handleUpgrade(req, socket, head, (ws) => {
+            wss.emit('connection', ws, req);
+        });
+        } else {
+        socket.destroy();
+        }
+    });
+
+    wss.on('connection', (ws) => {
+        ws.isAlive = true;
 
     ws.on('message', (data) => {
       // Forward messages to all other connected clients

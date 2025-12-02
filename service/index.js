@@ -159,6 +159,8 @@ apiRouter.post('/score', verifyAuth, async (req, res) => {
 
     const updatedScores = await db.updateScore(user.email, displayName, completed);
 
+    wss.on('connection', () => console.log("Client connected"));
+
     //broadcast score update
     const message = JSON.stringify({
       type: "scoreUpdate",
@@ -218,12 +220,12 @@ app.use((_req, res) => {
 async function startServer() {
   try {
     await db.connectDB(); 
-    const httpService = app.listen(port, () => {
+    const httpServer = app.listen(port, () => {
       console.log(`🚀 Listening on port ${port}`);
     });
 
     // Attach websocket proxy
-    peerProxy(httpService, app);
+    peerProxy(httpServer, app);
 
   } catch (err) {
     console.error('❌ Failed to connect to MongoDB:', err.message);
