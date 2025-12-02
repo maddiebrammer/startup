@@ -218,7 +218,7 @@ app.use((_req, res) => {
 async function startServer() {
   try {
     await db.connectDB(); 
-    app.listen(port, () => {
+    const httpService = app.listen(port, () => {
       console.log(`🚀 Listening on port ${port}`);
     });
 
