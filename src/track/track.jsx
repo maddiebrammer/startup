@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { clearUser, getUser } from '../auth.js';
 import './track.css';
+import { scoreNotifier } from './scoreNotifier.js';
+
 
 export function Track() {
   const navigate = useNavigate();
@@ -9,12 +11,26 @@ export function Track() {
 
   const [habits, setHabits] = useState([]);
   const [newHabitText, setNewHabitText] = useState('');
+  const [events, setEvents] = useState([]);
+
 
   // Logout function
   const handleLogout = () => {
     clearUser();
     navigate('/');
   };
+
+  useEffect(() => {
+  function handleEvent(event) {
+    if (event.type === "scoreUpdate") {
+      setEvents(prev => [...prev, `${event.user} increased their score to ${event.score}`]);
+    }
+  }
+
+  scoreNotifier.addHandler(handleEvent);
+  return () => scoreNotifier.removeHandler(handleEvent);
+}, []);
+
 
   // Verify auth and load habits
   useEffect(() => {
@@ -123,6 +139,11 @@ const toggleHabit = async (id) => {
 
   return (
     <main>
+      <div className="score-events">
+        {events.map((msg, i) => (
+          <div key={i} className="event-msg">{msg}</div>
+        ))}
+      </div>
       <h1>My Habits</h1>
 
       <div className="add-habit">
