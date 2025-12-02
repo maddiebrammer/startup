@@ -6,6 +6,8 @@ const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
 const uuid = require('uuid');
 const db = require('./database');
+const { peerProxy } = require('./peerProxy.js');
+
 
 const app = express();
 const authCookieName = 'token';
@@ -205,6 +207,10 @@ async function startServer() {
     app.listen(port, () => {
       console.log(`🚀 Listening on port ${port}`);
     });
+
+    // Attach websocket proxy
+    peerProxy(httpService);
+    
   } catch (err) {
     console.error('❌ Failed to connect to MongoDB:', err.message);
     process.exit(1);
