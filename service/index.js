@@ -223,7 +223,7 @@ async function startServer() {
     });
 
     // Attach websocket proxy
-    peerProxy(httpService);
+    peerProxy(httpService, app);
 
   } catch (err) {
     console.error('❌ Failed to connect to MongoDB:', err.message);

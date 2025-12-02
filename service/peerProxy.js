@@ -1,7 +1,10 @@
 const { WebSocketServer, WebSocket } = require('ws');
 
-function peerProxy(httpServer) {
+function peerProxy(httpServer, app) {
   const wss = new WebSocketServer({ server: httpServer });
+
+  // Store reference so Express routes can broadcast
+  app.set('wss', wss);
 
   wss.on('connection', (ws) => {
     ws.isAlive = true;
